@@ -1,0 +1,56 @@
+#---------------------------------------------------------------------------------------------------
+# https://pre-commit.com/#pre-commit-configyaml---top-level
+# The keys that are to be applied homogeneously to all hooks can be listed at top level.
+# For examples, if all linting hooks to be applied to the same files, then 
+# ``files`` (what to be included) and ``exclude`` keys can be listed at topmost level.
+# Note: use | as delimiter with NO additional spacing.
+#
+# For example, to include docs and tests folders:
+#   ```files: ^docs/|^tests/```
+# 
+# or to exclude docs and tests folders:
+#   ```exclude: ^docs/|^tests/```
+#
+# Note: Similar key-values can also be provided for each hook individually.
+# They need to be nested (indented) inside ``hooks``.
+#
+# Regular expressions also work: https://pre-commit.com/#regular-expressions
+# Either of the following would result the same:
+#
+# exclude: |
+#   (?x)^(
+#     docs/.*py|
+#     tests/.*py|
+#     examples/.*py
+#   )$
+#
+# exclude: (?x)^(docs/.*py|tests/.*py|examples/.*py)$
+#---------------------------------------------------------------------------------------------------
+
+files: ^mnflow/|^tests/
+# exclude: ^docs/|^tests/|^examples
+
+repos:
+
+  # https://flake8.pycqa.org/en/latest/index.html
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.1.0
+    hooks:
+    - id: flake8
+      # files: ^mnflow/
+
+  # https://pycqa.github.io/isort/docs/configuration/pre-commit.html
+  - repo: https://github.com/PyCQA/isort
+    rev: 5.13.2
+    hooks:
+    - id: isort
+      # files: ^mnflow/
+    
+
+  # https://black.readthedocs.io/en/stable/integrations/source_version_control.html
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 24.8.0
+    hooks:
+      - id: black
+        language_version: python3.12
+        # files: ^mnflow/
