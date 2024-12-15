@@ -1,6 +1,10 @@
 # mnFlow
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14357811.svg)](https://doi.org/10.5281/zenodo.14357811)
 [![Documentation](https://readthedocs.org/projects/mnflow/badge/?version=latest)](https://mnflow.readthedocs.io/en/latest/)
+[![Total Downloads](https://img.shields.io/pypi/dw/mnflow?style=flat-square)](https://pepy.tech/project/mnflow)
+
+
 
 Single DLD             |  Parallelized DLD
 :-------------------------:|:-------------------------:
