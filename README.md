@@ -1,9 +1,11 @@
 # mnFlow
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14357811.svg)](https://doi.org/10.5281/zenodo.14357811)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Documentation](https://readthedocs.org/projects/mnflow/badge/?version=latest)](https://mnflow.readthedocs.io/en/latest/)
-[![Total Downloads](https://img.shields.io/pypi/dw/mnflow?style=flat-square)](https://pepy.tech/project/mnflow)
-
+[![PyPI downloads](https://img.shields.io/pypi/dw/mnflow.svg)](https://pypistats.org/packages/mnflow)
+[![PyPI version](https://img.shields.io/pypi/v/mnflow)](https://pypi.org/project/mnflow/)
+[![Code style: Black](https://img.shields.io/badge/code%20style-Black-000000.svg)](https://github.com/psf/black)
 
 
 Single DLD             |  Parallelized DLD

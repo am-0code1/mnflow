@@ -75,6 +75,9 @@ class DLD:
         (0 to ``Np-1``) should be arrayed.
     """
 
+    # available boundary treatment approaches
+    available_boundary_treatments = [None, "pow", "pow_2", "pow_3", "3d"]
+
     def __init__(
         self,
         # Core Geometry
@@ -88,6 +91,8 @@ class DLD:
         pitch_a=None,
         height=None,
         # Boundary
+        opt_enable_boundary_treatment_none=None,
+        opt_acc_balance_pressure=None,
         boundary_treatment=None,
         pow_val=None,
         phi=None,
@@ -132,6 +137,25 @@ class DLD:
 
         **Boundary**
 
+        opt_enable_boundary_treatment_none : bool, optional
+            The code automatically applies a boundary treatment approach to
+            mitigate the issues associated with dep. and acc. sidewalls
+            disturbing the nearby fluid flow. In the case that no special
+            boundary treatment is needed, this parameter can be used:
+            if ``True``, and ``boundary_treatment=None``:
+            `No special boundary treatment needed`;
+            if ``False``, and ``boundary_treatment=None``:
+            a boundary treatment approach is automatically selected;
+            by default False.
+        opt_acc_balance_pressure : bool, optional
+            This parameter enables the local pressure balance at the upstream-
+            most row of accumulation sidewall. The local pressure balance
+            feature is applied for the ``3d`` boundary treatment by default.
+            Other boundary treatment approaches can also adopt this feature by
+            passing ``opt_acc_balance_pressure=True`` in conjunction with
+            an optional value for ``phi`` in the case that the default value
+            of ``phi`` may need an adjustment. In order to disable this
+            feature, pass ``opt_acc_balance_pressure=False``; by default True.
         boundary_treatment : str or NoneType, optional; by default 'pow_3'
             Type of boundary treatment; available options are:
                 - None : no special treatment.
@@ -166,11 +190,14 @@ class DLD:
             type of ``boundary_treatment``, by default None.
         acc_usm_gap_a_widening : float, optional
             (usm: up.stream.most) Gap widening magnitude for the upstreammost
-            entity on acc. sidewall, by default None.
+            entity on acc. sidewall; it can override the automatic gap
+            widening value that would otherwise be applied to satisfy the
+            resistance ratio related to the ``phi`` value, by default None.
         _max_allowed_lateral_gap_widening_nondim : float, optional
             Maximum allowed lateral gap nondimensionalized by axial sidelength
             of entity, a value in the range of [0,2) is expected, by default
             1.5.
+
 
         **Misc.**
 
@@ -183,7 +210,14 @@ class DLD:
         """
 
         # --- default params
-        if boundary_treatment is None:
+        if opt_enable_boundary_treatment_none is None:
+            opt_enable_boundary_treatment_none = False
+        if opt_acc_balance_pressure is None:
+            opt_acc_balance_pressure = True
+        if (
+            boundary_treatment is None
+            and not opt_enable_boundary_treatment_none
+        ):
             boundary_treatment = [None, "pow_2", "pow_3", "pow", "3d"][2]
         if pow_val is None:
             pow_val = 2.463
@@ -302,7 +336,7 @@ class DLD:
         # The gap deviations are wrt. the normal gaps.
         # A positive value denotes widening of gap and negative values
         # refer to shrinkage of gap.
-        if self.boundary_treatment in [None, "pow", "pow_2", "pow_3", "3d"]:
+        if self.boundary_treatment in DLD.available_boundary_treatments:
 
             # --------------
             # set pow_val
@@ -385,8 +419,10 @@ class DLD:
         # Entities on depletion boundary lanes
         # --------------------------------------------------------------------
         self.dep_dots_full = []
+        self._dep_gap = []  # solely for report and dev.
         for boundary_lane_ind in range(self.dep_num_lanes):
             tmp = []
+            self._dep_gap.append([])
             for i in range(self.Np + 1):
                 rot_base = [
                     self.ll[0] - self.pitch_w * (boundary_lane_ind + 1),
@@ -483,15 +519,22 @@ Please, take note of the configurations and report this bug."""
 {self.boundary_treatment}"""
                     )
 
+                # adding entity coords to list
                 tmp.append([x, y])
+
+                # adding gap to list
+                self._dep_gap[-1].append(self.gap_w - (x - x_abs))
+
             self.dep_dots_full.append(np.array(tmp))
 
         # --------------------------------------------------------------------
         # Entities on accumulation boundary lanes
         # --------------------------------------------------------------------
         self.acc_dots_full = []
+        self._acc_gap = []  # solely for report and dev.
         for boundary_lane_ind in range(self.acc_num_lanes):
             tmp = []
+            self._acc_gap.append([])
             for i in range(self.Np):
                 rot_base = [
                     self.ll[0]
@@ -517,16 +560,13 @@ Please, take note of the configurations and report this bug."""
                     y = y_abs
                     x = x_abs
 
-                elif self.boundary_treatment in ["pow_2", "pow_3", "pow"]:
-                    # post_x_deviation/gap_w=-1+(2-n.eps)^(1/pow_val)
-                    x = x_abs + self.gap_w * (
-                        -1
-                        + (2.0 - (self.Np - i) / self.Np)
-                        ** (1.0 / self.pow_val)
-                    )
-                    y = y_abs
-
-                elif self.boundary_treatment == "3d":
+                # The following to be applied for certain situations:
+                # - 3d model on non-usm rows (i!=0)
+                # - Any model on usm row (i==0) if pressure balance is needed:
+                #   ``opt_acc_balance_pressure==True``
+                elif (self.boundary_treatment == "3d" and i != 0) or (
+                    self.opt_acc_balance_pressure and i == 0
+                ):
                     # ---------------------------------------------
                     # Similar to above:
                     # n = Np - i
@@ -557,6 +597,18 @@ Please, take note of the configurations and report this bug."""
 `gap_w` for row {row} of acc. boundary is negative: {this_gap}.
 Please, take note of the configurations and report this bug."""
                         )
+                    elif this_gap * 1.0e6 < self.gap_w:
+                        print(
+                            f"""Warning:
+The ``phi`` value ({self.phi}) seems to be too low for the current
+geometrical configuration, as a result of which the axial gap of upstreammost
+row next to accumulation sidewall ({this_gap*1e6:.3f}) is smaller than the bulk
+value ({self.gap_w}).
+While the pressure balance is still valid, this may not be a good design; gaps
+next to accumulation sidewall should be at least equal to that of the bulk
+grid.
+                            """
+                        )
 
                     x = x_abs + (-self.gap_w + this_gap * 1.0e6)
                     y = y_abs
@@ -568,7 +620,7 @@ Please, take note of the configurations and report this bug."""
                             self.Np,
                             self.pitch_w * 1e-6,
                             self.pitch_a * 1e-6,
-                            (self.pitch_w - self.gap_w) * 1e-6,  # diameter
+                            (self.pitch_a - self.gap_a) * 1e-6,  # diameter
                             self.height * 1e-6,
                             dep_side,
                             row,
@@ -588,10 +640,33 @@ Please, take note of the configurations and report this bug."""
 {this_gap}.
 Please, take note of the configurations and report this bug."""
                             )
+                        elif this_gap * 1.0e6 < self.gap_a:
+                            print(
+                                f"""Warning:
+The ``phi`` value ({self.phi}) seems to be too high for the current
+geometrical configuration, as a result of which no gap widening is needed
+in lateral direction of upstreammost row next to accumulation sidewall.
+In fact, the required lateral gap is {this_gap*1e6:.3f}, which is smaller than
+the original lateral gap of bulk grid ({self.gap_a}).
+In the case that the difference between these values is large, the phi value
+should be adjusted to reduce the difference as much as possible for more
+accurate pressure balance in this region.
+                            """
+                            )
 
                         self.acc_usm_gap_a_widening = max(
                             0.0, this_gap * 1.0e6 - self.gap_a
                         )
+
+                elif self.boundary_treatment in ["pow_2", "pow_3", "pow", "3d"]:
+                    # post_x_deviation/gap_w=-1+(2-n.eps)^(1/pow_val)
+                    # for i=0: gives x=x_abs (no deviation from bulk)
+                    x = x_abs + self.gap_w * (
+                        -1
+                        + (2.0 - (self.Np - i) / self.Np)
+                        ** (1.0 / self.pow_val)
+                    )
+                    y = y_abs
 
                 else:
                     raise ValueError(
@@ -599,7 +674,12 @@ Please, take note of the configurations and report this bug."""
 {self.boundary_treatment}"""
                     )
 
+                # adding entity coords to list
                 tmp.append([x, y])
+
+                # adding gap to list
+                self._acc_gap[-1].append(self.gap_w + (x - x_abs))
+
             self.acc_dots_full.append(np.array(tmp))
 
         # --------------------------------------------------------------------
@@ -714,23 +794,6 @@ adjusted through ``_max_allowed_lateral_gap_widening_nondim`` as needed."""
             pitch_a=self.pitch_a,
         )
 
-    @staticmethod
-    def get_dc(
-        Np,
-        gap_w,
-        pitch_w=None,
-        pitch_a=None,
-    ):
-        """Returning the critical diameter."""
-
-        eps = 1.0 / Np
-
-        # --- The following may need to be revisited for asym. structures
-        if pitch_a is not None and pitch_w is not None:
-            eps *= pitch_a / pitch_w
-
-        return 1.4 * gap_w * eps**0.48
-
     def mirror(
         self,
         dots: Union[list, tuple, np.ndarray],
@@ -837,9 +900,57 @@ adjusted through ``_max_allowed_lateral_gap_widening_nondim`` as needed."""
                 bbox_inches="tight",
             )
 
+    def get_boundary_gaps(
+        self,
+    ):
+        """Get the dep. and acc. boundary gaps.
+
+        Returns
+        -------
+        dict
+        """
+        boundary_gaps = {
+            "dep": self.get_dep_gaps(),
+            "acc": self.get_acc_gaps(),
+            "acc_usm_gap_a_widening": self.acc_usm_gap_a_widening,
+        }
+
+        return boundary_gaps
+
+    def get_dep_gaps(
+        self,
+    ):
+        """Get the dep. boundary gaps."""
+
+        return np.array(self._dep_gap)
+
+    def get_acc_gaps(
+        self,
+    ):
+        """Get the acc. boundary gaps."""
+
+        return np.array(self._acc_gap)
+
     # ------------------------------------------------------------------------
     # Static methods
     # ------------------------------------------------------------------------
+
+    @staticmethod
+    def get_dc(
+        Np,
+        gap_w,
+        pitch_w=None,
+        pitch_a=None,
+    ):
+        """Returning the critical diameter."""
+
+        eps = 1.0 / Np
+
+        # --- The following may need to be revisited for asym. structures
+        if pitch_a is not None and pitch_w is not None:
+            eps *= pitch_a / pitch_w
+
+        return 1.4 * gap_w * eps**0.48
 
     @staticmethod
     def get_geom_config_auto(

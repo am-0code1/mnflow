@@ -51,23 +51,49 @@ def _residual_3d_boundary_treatment(
             ``this_f/this_pitch_w=f/pitch_w*Np/(2.Np-n)``
 
         - n=Np:
-            this_R+R_lat=R_b.(1+eps)
+            this_R+R_lat=R_b_axial+R_b_lateral.eps
+
+            We define ``omega=R_b_lateral/R_b_axial``. Therefore:
+            this_R+R_lat=R_b_axial(1+eps.omega)
+
+            ``omega`` can be calculated as follows:
+            omega=R_b_lateral/R_b_axial
+            =[pitch_w/pitch_a.f(pitch_a)]/[pitch_a/pitch_w.f(pitch_w)],
+            wherein ``f`` denotes the resistance correction factor (the
+            bracket in Eq. 2 (Inglis et. al. 2020)).
+
+            The expression for ``omega`` can be simplified into:
+            omega=(pitch_w/pitch_a)**2.f(pitch_a)/f(pitch_w)
+
+            From pressure balance:
+            this_R+R_lat=R_b_axial(1+eps.omega)
             assume R_lat=phi.this_R
-            this_R(1+phi)=R_b.(1+eps)
-            this_R/R_b=(1+eps)/(1+phi)
-            pitch_w/this_pitch_w.this_f/f=(1+eps)/(1+phi)
+            this_R(1+phi)=R_b_axial(1+eps.omega)
+            this_R/R_b_axial=(1+eps.omega)/(1+phi)
+            -->
+            [f(this_pitch_w)/this_pitch_w]/[f(pitch_w)/pitch_w]
+            =(1+eps.omega)/(1+phi)
 
             Finally:
-            ``this_f/this_pitch_w=f/pitch_w*(1+eps)/(1+phi)``
+            f(this_pitch_w)/this_pitch_w=
+                f(pitch_w)/pitch_w.(1+eps.omega)/(1+phi)
 
+
+            #--- Lateral gap
             Also, from above we have the following for ``R_acc_N_lat``:
-            this_R/R_b=(1+eps)/(1+phi)
-            =>  phi.this_R/R_b=phi.(1+eps)/(1+phi)
-                R_lat/R_b=phi.(1+eps)/(1+phi)
-                pitch_w/this_pitch_w.this_f/f=phi.(1+eps)/(1+phi)
+            this_R/R_b_axial=(1+eps.omega)/(1+phi)
+            =>
+            phi.this_R/R_b_axial=phi.(1+eps.omega)/(1+phi)
+            R_lat/R_b_axial=phi.(1+eps.omega)/(1+phi)
+
+            We know the following
+            R_lat/R_b_axial=
+            [pitch_w/this_pitch_w.f(this_pitch_w)]/[pitch_a/pitch_w.f(pitch_w)]
+            which, from above, is equal to phi.(1+eps.omega)/(1+phi)
 
             Finally:
-            ``this_f/this_pitch_w=f/pitch_w*phi.(1+eps)/(1+phi)``
+            f(this_pitch_w)/this_pitch_w=
+                phi.pitch_a/pitch_w.[f(pitch_w)/pitch_w].(1+eps.omega)/(1+phi)
 
             Note:
                 For `R_acc_N_lat`, the orientaion is 90-deg different from that
@@ -77,20 +103,12 @@ def _residual_3d_boundary_treatment(
                 Nth lateral resistance. As the axial pitch is fixed, the
                 difference of the axial pitch values show the gap widening
                 required through cutting the pillars.
-
-            Note:
-                A one-based ``row`` is expected as input.
     """
 
     # make sure row is in the range
     row %= Np
     if row == 0:
         row = Np
-
-    # rotate orientation in case of lateral resistance in Nth row of
-    # accumulation side
-    if acc_Nth_lat:
-        pitch_w, pitch_a = pitch_a, pitch_w
 
     # valid range
     D_over_W_valid_range = [0.3, 0.9]
@@ -100,7 +118,7 @@ def _residual_3d_boundary_treatment(
     T = height
     D = diameter
     W = pitch_w
-    # L = pitch_a
+    L = pitch_a
 
     D_over_W = D / W
     T_over_W = T / W
@@ -116,24 +134,47 @@ D/W={D_over_W} while the valid range is {D_over_W_valid_range}"""
 T/W={T_over_W} while the valid range is {T_over_W_valid_range}"""
         )
 
-    f = correction_factor(D, W, T)
+    # resistance correction factor for flow along axis of channel
+    f_a = correction_factor(D, W, T)
+
+    # resistance correction factor for flow along width of channel
+    f_w = correction_factor(D, L, T)
+
+    # resistance correction factor for this local flow;
+    # ``this_pitch_w``: pitch normal to local flow
     this_f = correction_factor(D, this_pitch_w, T)
 
+    # ------------------------------------------------------------------------
+    # nondim params
+    # pitch_ratio: lateral pitch over axial pitch
+    # omega: resistance ratio of bulk grid (lateral over axial): R_b_l/R_b_a
+    # ------------------------------------------------------------------------
+    pitch_ratio = pitch_w / pitch_a
+    omega = pitch_ratio**2.0 * f_w / f_a
+
     # --- different cases
+    #
+    # General form:
+    #
+    # this_R = R_b_axial * psi
+    #
     if dep_side:
         psi = Np / row
     else:
+        eps = 1.0 / Np
         if row == Np and phi is not None:
-            if acc_Nth_lat:  # lateral resistance of Nth row on acc side
-                psi = phi * (1 + 1 / Np) / (1 + phi)
-            else:  # axial resistance of Nth row on acc side
-                psi = (1 + 1 / Np) / (1 + phi)
+            # axial resistance of Nth row on acc side
+            psi = (1 + eps * omega) / (1 + phi)
+
+            # lateral resistance of Nth row on acc side
+            if acc_Nth_lat:
+                psi *= phi / pitch_ratio
         else:
             psi = Np / (2 * Np - row)
 
     # --- residual
     lhs = this_f / this_pitch_w
-    rhs = f / pitch_w * psi
+    rhs = f_a / pitch_w * psi
 
     return lhs - rhs
 
@@ -193,9 +234,14 @@ def get_gap_w_3d_boundary_treatment(
     # )
     # this_pitch_w=msg.x[0]
 
-    # --- Both ``brentq`` & ``bisect`` work well
-    lower_bound = diameter  # the case of gap=0
+    # Small number as the minimum allowed gap
+    _EPSILON = 1e-15
+
+    # --- range to examine to find solution
+    lower_bound = diameter + _EPSILON  # the case of gap~0
     upper_bound = 10 * pitch_w
+
+    # --- Both ``brentq`` & ``bisect`` work well
     this_pitch_w, msg = bisect(
         _residual_3d_boundary_treatment,
         lower_bound,
@@ -205,6 +251,14 @@ def get_gap_w_3d_boundary_treatment(
         xtol=1e-15,
         full_output=True,
     )
+
+    # --- ``root_scalar`` can be used as well
+    # sol = root_scalar(
+    #     _residual_3d_boundary_treatment,
+    #     args=args,
+    #     method='toms748',
+    #     bracket=[lower_bound, upper_bound])
+    # this_pitch_w=sol.root
 
     # --- gap and residual
     this_gap_w = this_pitch_w - diameter
