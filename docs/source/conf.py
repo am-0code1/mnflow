@@ -9,7 +9,7 @@
 project = 'mnflow'
 copyright = '2024, Aryan Mehboudi'
 author = 'Aryan Mehboudi'
-release = '0.0.0.1'
+release = '0.0.1'
 
 # import sys
 # import os

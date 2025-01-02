@@ -1,4 +1,4 @@
-mnFlow documentation
+mnFlow Documentation
 ======================
 
 Micro-nanoflow (`mnFlow`) library is aimed at providing the community with tools for design and modeling of micro-nanofluidic chips.
@@ -9,13 +9,11 @@ The produced CAD files can be used for computational modeling, optimization, and
 Check out the :doc:`usage` section for further information, including how to install the package as well as a quick start.
 The :doc:`tutorials` section also includes a set of examples to introduce various features of the package.
 Finally, the :doc:`manual` section describes how the package works under the hood.
+For information on how to cite the related works see :ref:`Citation <Citation>`.
 
 .. note::
 
    This project is under development.
-
-.. Contents
-.. --------
 
 .. toctree::
    :maxdepth: 2
@@ -26,7 +24,6 @@ Finally, the :doc:`manual` section describes how the package works under the hoo
    manual
    api
 
-.. _Refs:
 
 Acknowledgments
 ----------------
@@ -43,6 +40,26 @@ We gratefully acknowledge their contributions to this project.
 - `git <https://github.com/git/git>`_ and `pre-commit <https://github.com/pre-commit/pre-commit>`_: For revision control and pre-commit hooks, respectively.
 - `sphinx <https://github.com/sphinx-doc/sphinx>`_, and `sphinx-rtd-theme <https://github.com/readthedocs/sphinx_rtd_theme>`_: For creating docs.
 - `pytest <https://github.com/pytest-dev/pytest>`_, and `pytest-cov <https://github.com/pytest-dev/pytest-cov>`_: For creating test cases.
+
+
+.. _Citation:
+
+Citation
+--------
+If you use this work in your research, please cite the relevant works associated with it as listed in the following.
+
+Original paper
+^^^^^^^^^^^^^^
+**A. Mehboudi**, **S. Singhal**, and **S.V. Sreenivasan**, **A universal framework for design and manufacture of deterministic lateral displacement chips**, *Lab on a Chip*, 2024.
+DOI: `10.1039/D4LC00838C <https://pubs.rsc.org/en/content/articlelanding/2025/lc/d4lc00838c>`_
+
+Zenodo Archive
+^^^^^^^^^^^^^^
+**A. Mehboudi**, **mnFlow: A package for micro/nanoflow**, *Zenodo*, 2024.
+DOI: `10.5281/zenodo.14357811 <https://zenodo.org/doi/10.5281/zenodo.14357811>`_
+
+
+.. _Refs:
 
 Refs
 ----

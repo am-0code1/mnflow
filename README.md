@@ -1,9 +1,11 @@
 # mnFlow
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.14357811.svg)](https://doi.org/10.5281/zenodo.14357811)
+[![License: AGPL v3](https://img.shields.io/badge/License-AGPL_v3-blue.svg)](https://www.gnu.org/licenses/agpl-3.0)
 [![Documentation](https://readthedocs.org/projects/mnflow/badge/?version=latest)](https://mnflow.readthedocs.io/en/latest/)
-[![Total Downloads](https://img.shields.io/pypi/dw/mnflow?style=flat-square)](https://pepy.tech/project/mnflow)
-
+[![PyPI downloads](https://img.shields.io/pypi/dw/mnflow.svg)](https://pypistats.org/packages/mnflow)
+[![PyPI version](https://img.shields.io/pypi/v/mnflow)](https://pypi.org/project/mnflow/)
+[![Code style: Black](https://img.shields.io/badge/code%20style-Black-000000.svg)](https://github.com/psf/black)
 
 
 Single DLD             |  Parallelized DLD
@@ -112,3 +114,47 @@ We gratefully acknowledge their contributions to this project.
 - [``sphinx``](https://github.com/sphinx-doc/sphinx), and [``sphinx-rtd-theme``](https://github.com/readthedocs/sphinx_rtd_theme): For creating docs.
 - [``pytest``](https://github.com/pytest-dev/pytest), and [``pytest-cov``](https://github.com/pytest-dev/pytest-cov): For creating test cases.
 
+
+
+## Citation
+
+If you use this work in your research, please cite the relevant works associated with it as listed in the following.
+
+### Original paper
+
+**A. Mehboudi**, **S. Singhal**, and **S.V. Sreenivasan**, **A universal framework for design and manufacture of deterministic lateral displacement chips**, *Lab on a Chip*, 2024.
+DOI: [10.1039/D4LC00838C](https://pubs.rsc.org/en/content/articlelanding/2025/lc/d4lc00838c) 
+
+BibTeX entry:
+```bibtex
+@article{mehboudi_universal_2024,
+  title = {A Universal Framework for Design and Manufacture of Deterministic Lateral Displacement Chips},
+  author = {Mehboudi, Aryan and Singhal, Shrawan and Sreenivasan, S.V.},
+  year = {2024},
+  month = dec,
+  journal = {Lab on a Chip},
+  publisher = {The Royal Society of Chemistry},
+  issn = {1473-0189},
+  doi = {10.1039/D4LC00838C}
+}
+```
+
+### Zenodo Archive
+**A. Mehboudi**, **mnFlow: A package for micro/nanoflow**, *Zenodo*, 2024.
+DOI: [10.5281/zenodo.14357811](https://zenodo.org/doi/10.5281/zenodo.14357811)
+
+BibTeX entry:
+```bibtex
+@misc{mehboudi_mnflow_2024,
+  title = {{{mnFlow}}: {{A}} Package for Micro/Nanoflow},
+  shorttitle = {{{mnFlow}}},
+  author = {Mehboudi, Aryan},
+  year = {2024},
+  month = dec,
+  publisher = {Zenodo},
+  doi = {10.5281/ZENODO.14357811},
+  url = {https://zenodo.org/doi/10.5281/zenodo.14357811},
+  abstract = {Micro-nanoflow (mnFlow) package is aimed at providing the community with tools for design and modeling of micro-nanofluidic chips.},
+  copyright = {GNU Affero General Public License v3.0 only}
+}
+```
