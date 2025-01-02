@@ -56,7 +56,7 @@ mccabe==0.7.0
 mdit-py-plugins==0.4.2
 mdurl==0.1.2
 mistune==3.0.2
--e git+ssh://git@github.com-am-0code1/am-0code1/mnflow.git@1081301a86c916befa017d214e9fe8098591e949#egg=mnflow
+mnflow==0.0.1
 more-itertools==10.5.0
 mypy-extensions==1.0.0
 myst-nb==1.1.2
