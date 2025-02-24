@@ -76,7 +76,7 @@ class DLD:
     """
 
     # available boundary treatment approaches
-    available_boundary_treatments = [None, "pow", "pow_2", "pow_3", "3d"]
+    available_boundary_treatments = [None, "pow", "pow_2", "pow_3", "3d", "mlb"]
 
     def __init__(
         self,
@@ -98,6 +98,8 @@ class DLD:
         phi=None,
         acc_usm_gap_a_widening=None,
         _max_allowed_lateral_gap_widening_nondim=None,
+        dep_top_gap_deviation_nondim=None,
+        acc_top_gap_deviation_nondim=None,
         # Misc.
         ll=None,
     ):
@@ -197,6 +199,20 @@ class DLD:
             Maximum allowed lateral gap nondimensionalized by axial sidelength
             of entity, a value in the range of [0,2) is expected, by default
             1.5.
+        dep_top_gap_deviation_nondim : list or tuple or NoneType, optional
+            Deviation of lateral gap at the most upstream row of depletion
+            lane(s) from the normal lateral gap (``gap_w``)
+            non-dimensionalized by ``gap_w``; a negative value denotes
+            decreasing gap; number of depletion lanes equals the lenght of
+            list/tuple; relevant if ``boundary_treatment`` is set to 'mlb';
+            by default None
+        acc_top_gap_deviation_nondim : list or tuple or NoneType, optional
+            Deviation of lateral gap at the most upstream row of accumulation
+            lane(s) from the normal lateral gap (``gap_w``)
+            non-dimensionalized by ``gap_w``; a negative value denotes
+            decreasing gap; number of accumulation lanes equals the lenght of
+            list/tuple; relevant if ``boundary_treatment`` is set to 'mlb';
+            by default None
 
 
         **Misc.**
@@ -212,21 +228,27 @@ class DLD:
         # --- default params
         if opt_enable_boundary_treatment_none is None:
             opt_enable_boundary_treatment_none = False
+
         if opt_acc_balance_pressure is None:
             opt_acc_balance_pressure = True
+
         if (
             boundary_treatment is None
             and not opt_enable_boundary_treatment_none
-        ):
+        ):  # default boundary treatment
             boundary_treatment = [None, "pow_2", "pow_3", "pow", "3d"][2]
+
         if pow_val is None:
             pow_val = 2.463
+
         if phi is None:
             # Once a more appropriate design rule is determined, this may be
             # revised.
             phi = 1
+
         if _max_allowed_lateral_gap_widening_nondim is None:
             _max_allowed_lateral_gap_widening_nondim = 1.5
+
         if ll is None:
             ll = (0, 0)
 
@@ -346,18 +368,61 @@ class DLD:
             elif self.boundary_treatment == "pow_3":
                 self.pow_val = 3
 
+            # --------------
+            # set mlb
+            # --------------
+            if self.boundary_treatment == "mlb":
+                if self.dep_top_gap_deviation_nondim is None:
+                    self.dep_top_gap_deviation_nondim = [-1]
+
+                if self.acc_top_gap_deviation_nondim is None:
+                    self.acc_top_gap_deviation_nondim = [1]
+
+            else:
+                if self.dep_top_gap_deviation_nondim is not None:
+                    raise ValueError(
+                        f"""
+``dep_top_gap_deviation_nondim`` needs to be None for boundary treatment other
+than 'mlb'. Currently:
+``boundary_treatment``: {self.boundary_treatment}
+``self.dep_top_gap_deviation_nondim``: {self.dep_top_gap_deviation_nondim}"""
+                    )
+
+                if self.acc_top_gap_deviation_nondim is not None:
+                    raise ValueError(
+                        f"""
+``acc_top_gap_deviation_nondim`` needs to be None for boundary treatment other
+than 'mlb'. Currently:
+``boundary_treatment``: {self.boundary_treatment}
+``self.acc_top_gap_deviation_nondim``: {self.acc_top_gap_deviation_nondim}"""
+                    )
+
         else:
             raise ValueError(
                 f"""Not a valid value for ``boundary_treatment``:
 {self.boundary_treatment}"""
             )
 
-        self.dep_num_lanes = 1
-        self.acc_num_lanes = 1
+        # --------------------------------------------------------------------
+        # number of lanes in dep boundaries
+        # --------------------------------------------------------------------
+        if self.dep_top_gap_deviation_nondim is None:
+            self.dep_num_lanes = 1
+        else:
+            self.dep_num_lanes = len(self.dep_top_gap_deviation_nondim)
+
+        # --------------------------------------------------------------------
+        # number of lanes in acc boundaries
+        # --------------------------------------------------------------------
+        if self.acc_top_gap_deviation_nondim is None:
+            self.acc_num_lanes = 1
+        else:
+            self.acc_num_lanes = len(self.acc_top_gap_deviation_nondim)
 
         """
         Core dots:
-            number of pillars: `number of lanes+1`
+            number of lanes: `Nw-acc_num_lanes-dep_num_lanes`
+            number of pillars per row: `number of lanes+1`
         """
         self.core_dots_num_lanes = (
             self.Nw - self.acc_num_lanes - self.dep_num_lanes
@@ -366,9 +431,82 @@ class DLD:
 
         # --------------------------------------------------------------------
         # angle of DLD core entities with channel axis stored as a positive
-        # value
+        # value (dep. side on the left, and acc. side on the right)
         # --------------------------------------------------------------------
         self.theta = abs(np.arctan(self.pitch_w / self.pitch_a / self.Np))
+
+        # mlb config
+        if self.boundary_treatment == "mlb":
+            self._config_mlb()
+
+    def _config_mlb(
+        self,
+    ):
+        # -------------------------------------------
+        # set up the dep rotations and displacements
+        # -------------------------------------------
+
+        # total lateral displacement of entities on dep. lanes from their
+        # unaltered positions on regular DLD matrix
+        self.dep_top_disp_tot = []
+        self.dep_theta_dev = []
+        self.dep_theta = []
+        for sn, gap_dev_nd in enumerate(self.dep_top_gap_deviation_nondim):
+            if sn == 0:
+                self.dep_top_disp_tot.append(0.0)
+            else:
+                self.dep_top_disp_tot.append(self.dep_top_disp_tot[-1])
+
+            # A positive rotation/displacement is towards outwad of DLD core;
+            # i.e. increasing the gap of boundary lanes
+            self.dep_top_disp_tot[-1] += gap_dev_nd * self.gap_w
+            self.dep_theta_dev.append(
+                np.arctan(
+                    self.dep_top_disp_tot[-1] / (self.Np - 1) / self.pitch_a
+                )
+            )
+
+            # ``dep_theta``: tilt angle of dep. lanes.
+            # Note that ``theta`` is stored as a positive value.
+            # A ``dep_theta`` of zero refers to channel axis.
+            # A positive ``dep_theta`` refers to a dep lane still having
+            # the same "overall" direction similar to bulk of DLD.
+            # A negative ``dep_theta`` refers to a dep lane having
+            # the opposite overall direction compared to bulk of DLD.
+            self.dep_theta.append(self.theta + self.dep_theta_dev[-1])
+
+        # -------------------------------------------
+        # set up the acc rotations and displacements
+        # -------------------------------------------
+        self.acc_top_disp_tot = []
+        self.acc_theta_dev = []
+        self.acc_theta = []
+        for sn, gap_dev_nd in enumerate(self.acc_top_gap_deviation_nondim):
+            if sn == 0:
+                self.acc_top_disp_tot.append(0.0)
+            else:
+                self.acc_top_disp_tot.append(self.acc_top_disp_tot[-1])
+
+            # A positive displacement is towards outwad of DLD core; i.e.
+            # increasing the gap of boundary lanes
+            self.acc_top_disp_tot[-1] += gap_dev_nd * self.gap_w
+
+            # A positive rotation direction is towards outwad of DLD core;
+            # i.e. increasing the gap of boundary lanes.
+            self.acc_theta_dev.append(
+                np.arctan(
+                    self.acc_top_disp_tot[-1] / (self.Np - 1) / self.pitch_a
+                )
+            )
+
+            # ``acc_theta``: tilt angle of acc. lanes.
+            # Note that ``theta`` is stored as a positive value.
+            # An ``acc_theta`` of zero refers to the channel axis.
+            # A positive ``acc_theta`` refers to an acc. lane still having
+            # the same overall direction compared to bulk of DLD.
+            # A negative ``acc_theta`` refers to an acc. lane having
+            # the opposite overall direction compared to bulk of DLD.
+            self.acc_theta.append(self.theta - self.acc_theta_dev[-1])
 
     def _prep(
         self,
@@ -430,6 +568,8 @@ class DLD:
                 ]
                 y_abs = rot_base[1] + i * self.pitch_a
                 x_abs = rot_base[0] - i * shift
+                r_rel = [x_abs - rot_base[0], y_abs - rot_base[1]]
+
                 # --- dev; to be removed
                 dist1 = i * self.pitch_a / np.cos(self.theta)
                 dist2 = np.sqrt(
@@ -513,8 +653,28 @@ Please, take note of the configurations and report this bug."""
                     x = x_abs + (self.gap_w - this_gap * 1.0e6)
                     y = y_abs
 
+                elif self.boundary_treatment == "mlb":
+                    # ---------------------------------------------------------
+                    # Note:
+                    #
+                    # For a counter-clockwise rotation of angle alpha:
+                    # transformation matrix:
+                    # [cos(alpha), -sin(alpha); sin(alpha), cos(alpha)]
+                    #
+                    # For depletion lanes on left side of mirror axis,
+                    # positive direction of rotation is counter-clockwise.
+                    # ---------------------------------------------------------
+                    x = (
+                        rot_base[0]
+                        + r_rel[0]
+                        * np.cos(self.dep_theta_dev[boundary_lane_ind])
+                        - r_rel[1]
+                        * np.sin(self.dep_theta_dev[boundary_lane_ind])
+                    )
+                    y = y_abs
+
                 else:
-                    print(
+                    raise ValueError(
                         f"""Invalid ``boundary_treatment``:
 {self.boundary_treatment}"""
                     )
@@ -544,6 +704,8 @@ Please, take note of the configurations and report this bug."""
                 ]
                 y_abs = rot_base[1] + i * self.pitch_a
                 x_abs = rot_base[0] - i * shift
+                r_rel = [x_abs - rot_base[0], y_abs - rot_base[1]]
+
                 # --- dev; to be removed
                 dist1 = i * self.pitch_a / np.cos(self.theta)
                 dist2 = np.sqrt(
@@ -562,8 +724,8 @@ Please, take note of the configurations and report this bug."""
 
                 # The following to be applied for certain situations:
                 # - 3d model on non-usm rows (i!=0)
-                # - Any model on usm row (i==0) if pressure balance is needed:
-                #   ``opt_acc_balance_pressure==True``
+                # - Any model including 3d on usm row (i==0) only if pressure
+                # balance is needed: ``opt_acc_balance_pressure==True``
                 elif (self.boundary_treatment == "3d" and i != 0) or (
                     self.opt_acc_balance_pressure and i == 0
                 ):
@@ -602,8 +764,8 @@ Please, take note of the configurations and report this bug."""
                             f"""Warning:
 The ``phi`` value ({self.phi}) seems to be too low for the current
 geometrical configuration, as a result of which the axial gap of upstreammost
-row next to accumulation sidewall ({this_gap*1e6:.3f}) is smaller than the bulk
-value ({self.gap_w}).
+row next to accumulation sidewall ({this_gap*1e6:.3f}) is smaller than the
+bulk value ({self.gap_w}).
 While the pressure balance is still valid, this may not be a good design; gaps
 next to accumulation sidewall should be at least equal to that of the bulk
 grid.
@@ -665,6 +827,25 @@ accurate pressure balance in this region.
                         -1
                         + (2.0 - (self.Np - i) / self.Np)
                         ** (1.0 / self.pow_val)
+                    )
+                    y = y_abs
+
+                elif self.boundary_treatment == "mlb":
+                    # ---------------------------------------------------------
+                    # Note:
+                    #
+                    # For a counter-clockwise rotation of angle alpha:
+                    # transformation matrix:
+                    # [cos(alpha), -sin(alpha); sin(alpha), cos(alpha)]
+                    # For accumulation lanes on left side of mirror axis,
+                    # positive direction of rotation is clockwise.
+                    # ---------------------------------------------------------
+                    x = (
+                        rot_base[0]
+                        + r_rel[0]
+                        * np.cos(self.acc_theta_dev[boundary_lane_ind])
+                        + r_rel[1]
+                        * np.sin(self.acc_theta_dev[boundary_lane_ind])
                     )
                     y = y_abs
 
