@@ -1,6 +1,6 @@
 [project]
 name = "mnflow"
-version = "0.0.1.2"
+version = "0.0.1.3"
 license = {file = "LICENSE"}
 authors = [
   { name="Aryan Mehboudi", email="armehbdev@gmail.com" },
