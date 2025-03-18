@@ -1159,10 +1159,10 @@ adjusted through ``_max_allowed_lateral_gap_widening_nondim`` as needed."""
         if this_gap_w is None:
             if d_c is not None:  # automation from critical diameter
                 this_gap_w = d_c / 1.4 / (1 / this_Np) ** 0.48
-            elif pitch_w is not None:
-                this_gap_w = pitch_w / 2.0
             elif gap_a is not None:
                 this_gap_w = gap_a
+            elif pitch_w is not None:
+                this_gap_w = pitch_w / 2.0
             elif pitch_a is not None:
                 this_gap_w = pitch_a / 2.0
             else:
