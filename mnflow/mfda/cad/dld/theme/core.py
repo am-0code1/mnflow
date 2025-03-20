@@ -373,10 +373,10 @@ class DLD:
             # --------------
             if self.boundary_treatment == "mlb":
                 if self.dep_top_gap_deviation_nondim is None:
-                    self.dep_top_gap_deviation_nondim = [-1]
+                    self.dep_top_gap_deviation_nondim = [-0.75]
 
                 if self.acc_top_gap_deviation_nondim is None:
-                    self.acc_top_gap_deviation_nondim = [1]
+                    self.acc_top_gap_deviation_nondim = [0.4]
 
             else:
                 if self.dep_top_gap_deviation_nondim is not None:
