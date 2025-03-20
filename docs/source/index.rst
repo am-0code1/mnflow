@@ -2,7 +2,9 @@ mnFlow Documentation
 ======================
 
 Micro-nanoflow (`mnFlow`) library is aimed at providing the community with tools for design and modeling of micro-nanofluidic chips.
-The current focus of the project is on :ref:`Deterministic Lateral Displacement (DLD) [1] <Refs>` structures.
+The current focus of the project is on 
+`Deterministic Lateral Displacement (DLD) <https://www.science.org/doi/10.1126/science.1094567>`_
+structures.
 In particular, the DLD design automation (DDA) tool aims at automating the entire process of design and production of computer-aided design (CAD) files for DLD-based micro-nanofluidic chips.
 The produced CAD files can be used for computational modeling, optimization, and manufacturing of DLD devices.
 
@@ -50,17 +52,16 @@ If you use this work in your research, please cite the relevant works associated
 
 Original paper
 ^^^^^^^^^^^^^^
-**A. Mehboudi**, **S. Singhal**, and **S.V. Sreenivasan**, **A universal framework for design and manufacture of deterministic lateral displacement chips**, *Lab on a Chip*, 2024.
+**A. Mehboudi**, **S. Singhal**, and **S.V. Sreenivasan**, **A universal framework for design and manufacture of deterministic lateral displacement chips**. *Lab on a Chip* **25**, 1521-1536 (2025).
 DOI: `10.1039/D4LC00838C <https://pubs.rsc.org/en/content/articlelanding/2025/lc/d4lc00838c>`_
+
+Pressure Balance
+^^^^^^^^^^^^^^^^
+**A. Mehboudi**, **S. Singhal**, and **S.V. Sreenivasan**, **Investigation of pressure balance in proximity of sidewalls in deterministic lateral displacement**. *arXiv:2503.11839v1 [physics.flu-dyn]* Mar 2025.
+DOI: `10.48550/arXiv.2503.11839 <https://doi.org/10.48550/arXiv.2503.11839>`_
 
 Zenodo Archive
 ^^^^^^^^^^^^^^
 **A. Mehboudi**, **mnFlow: A package for micro/nanoflow**, *Zenodo*, 2024.
 DOI: `10.5281/zenodo.14357811 <https://zenodo.org/doi/10.5281/zenodo.14357811>`_
 
-
-.. _Refs:
-
-Refs
-----
-[1] `L. R. Huang, E. C. Cox, R. H. Austin and J. C. Sturm, Science, 2004, 304, 987-990. <https://www.science.org/doi/10.1126/science.1094567>`_

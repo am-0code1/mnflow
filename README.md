@@ -122,20 +122,50 @@ If you use this work in your research, please cite the relevant works associated
 
 ### Original paper
 
-**A. Mehboudi**, **S. Singhal**, and **S.V. Sreenivasan**, **A universal framework for design and manufacture of deterministic lateral displacement chips**, *Lab on a Chip*, 2024.
+**A. Mehboudi**, **S. Singhal**, and **S.V. Sreenivasan**, **A universal framework for design and manufacture of deterministic lateral displacement chips**. *Lab on a Chip* **25**, 1521-1536 (2025).
 DOI: [10.1039/D4LC00838C](https://pubs.rsc.org/en/content/articlelanding/2025/lc/d4lc00838c) 
 
 BibTeX entry:
 ```bibtex
-@article{mehboudi_universal_2024,
+@article{mehboudi_universal_2025,
   title = {A Universal Framework for Design and Manufacture of Deterministic Lateral Displacement Chips},
-  author = {Mehboudi, Aryan and Singhal, Shrawan and Sreenivasan, S.V.},
-  year = {2024},
-  month = dec,
+  author = {Mehboudi, Aryan and Singhal, Shrawan and Sreenivasan, S. V.},
+  year = {2025},
+  month = mar,
   journal = {Lab on a Chip},
+  volume = {25},
+  number = {6},
+  pages = {1521--1536},
   publisher = {The Royal Society of Chemistry},
   issn = {1473-0189},
-  doi = {10.1039/D4LC00838C}
+  doi = {10.1039/D4LC00838C},
+  url = {https://pubs.rsc.org/en/content/articlelanding/2025/lc/d4lc00838c},
+  urldate = {2025-03-14}
+}
+```
+
+### Pressure Balance
+
+**A. Mehboudi**, **S. Singhal**, and **S.V. Sreenivasan**, **Investigation of pressure balance in proximity of sidewalls in deterministic lateral displacement**. 
+*arXiv:2503.11839v1 [physics.flu-dyn]* Mar 2025.
+DOI: [10.48550/arXiv.2503.11839](https://doi.org/10.48550/arXiv.2503.11839) 
+
+BibTeX entry:
+```bibtex
+@misc{mehboudi_investigation_2025,
+  title = {Investigation of Pressure Balance in Proximity of Sidewalls in Deterministic Lateral Displacement},
+  author = {Mehboudi, Aryan and Singhal, Shrawan and Sreenivasan, S. V.},
+  year = {2025},
+  month = mar,
+  number = {arXiv:2503.11839},
+  eprint = {2503.11839},
+  primaryclass = {physics},
+  publisher = {arXiv},
+  doi = {10.48550/arXiv.2503.11839},
+  url = {http://arxiv.org/abs/2503.11839},
+  urldate = {2025-03-20},
+  archiveprefix = {arXiv},
+  keywords = {Physics - Fluid Dynamics}
 }
 ```
 
