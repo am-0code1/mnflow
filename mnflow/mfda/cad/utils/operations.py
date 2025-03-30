@@ -218,7 +218,7 @@ def reverse_tone(
         cell_target = []
         for sn, this_cell_src in enumerate(cell_src):
             cell_target.append(this_cell_src.layout().create_cell("REV"))
-        # cell_target = [layout.create_cell("REV")]*len(cell_src)
+
     elif type(cell_target) not in [list, tuple]:
         cell_target = [cell_target]
 
@@ -227,6 +227,11 @@ def reverse_tone(
         layer = [layer]
 
     for sn, this_cell_src in enumerate(cell_src):
+
+        # Currently, clip box is defined based on the bounding box of whole
+        # cell, independent of the constituent layers. This piece can be moved
+        # to inside the following loop to define clip based on the bbox
+        # related to each layer as needed.
         bb = bbox(this_cell_src)
         TDBU = db.CplxTrans(this_cell_src.layout().dbu).inverted()
         if clip_pad is None:
@@ -241,27 +246,39 @@ def reverse_tone(
                     bb[1][1] + clip_pad[1][1],
                 )
             )
-        region = []
-        for sn_layer, this_layer in enumerate(layer):
-            region.append(db.Region(this_cell_src.begin_shapes_rec(this_layer)))
-            region[-1].merge()
-        cell_target[sn].clear()
-        for sn_layer, this_layer in enumerate(layer):
-            reg_to_be_inserted = clip - region[sn_layer]
-            if cutout is not None:
-                if cutout[sn_layer] is not None:
-                    for this_cutout in cutout[sn_layer]:
-                        reg_cutout = db.Region(
-                            TDBU
-                            * db.DBox(
-                                (bb[0][0] + bb[1][0]) / 2 + this_cutout[0][0],
-                                (bb[0][1] + bb[1][1]) / 2 + this_cutout[0][1],
-                                (bb[0][0] + bb[1][0]) / 2 + this_cutout[1][0],
-                                (bb[0][1] + bb[1][1]) / 2 + this_cutout[1][1],
+
+        # currently, it is assumed that target and source cell lists are the
+        # same, which should work for most practical applications.
+        # As such, only layers that need to reverse are processed, and
+        # the rest are not altered. In a general case that target cells may
+        # not be the same as source cells, the unaltered cells need to be
+        # copied to the target cells.
+        for sn_layer in range(this_cell_src.layout().layers()):
+            if sn_layer in layer:
+                cell_target[sn].clear(sn_layer)
+
+                region = db.Region(this_cell_src.begin_shapes_rec(sn_layer))
+                region.merge()
+
+                reg_to_be_inserted = clip - region
+                if cutout is not None:
+                    if cutout[sn_layer] is not None:
+                        for this_cutout in cutout[sn_layer]:
+                            reg_cutout = db.Region(
+                                TDBU
+                                * db.DBox(
+                                    (bb[0][0] + bb[1][0]) / 2
+                                    + this_cutout[0][0],
+                                    (bb[0][1] + bb[1][1]) / 2
+                                    + this_cutout[0][1],
+                                    (bb[0][0] + bb[1][0]) / 2
+                                    + this_cutout[1][0],
+                                    (bb[0][1] + bb[1][1]) / 2
+                                    + this_cutout[1][1],
+                                )
                             )
-                        )
-                        reg_to_be_inserted -= reg_cutout
-            cell_target[sn].shapes(this_layer).insert(reg_to_be_inserted)
+                            reg_to_be_inserted -= reg_cutout
+                cell_target[sn].shapes(sn_layer).insert(reg_to_be_inserted)
 
     for cell in cell_to_prune:
         cell.layout().prune_cell(cell.cell_index(), -1)
