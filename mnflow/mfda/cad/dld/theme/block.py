@@ -266,9 +266,11 @@ class DLD(Element, core_DLD):
         bus_length=None,
         # Padding for NIL
         opt_padding_features=None,
+        layer_padding=None,
         padding_width=None,
         padding_entity_dim=None,
         padding_entity_pitch=None,
+        opt_padding_reverse_tone=None,
         # Relatively detailed config params
         # --- Callback function to generate entities with arbitrary profile
         core_entity_func=None,
@@ -600,14 +602,18 @@ class DLD(Element, core_DLD):
 
         opt_padding_features : bool, optional
             (NIL) Whether to add decorative features, by default False
+        layer_padding : tuple or list, optional
+            (NIL) Layer info for padding features, optional.
         padding_width : dict, optional
             (NIL) Padding width of decorative stripes around the design, by
             default {'low': 30, 'right': 30, 'top': 30, 'left': 30, }
-        padding_entity_dim : list, optional
+        padding_entity_dim : list or tuple, optional
             (NIL) Dimensions of decorative entity, by default None
-        padding_entity_pitch : _type_, optional
+        padding_entity_pitch : list or tuple, optional
             (NIL) Pitch of decorative entities array in each direction, by
             default None
+        opt_padding_reverse_tone : bool, optional
+            (NIL) Whether to reverse tone of padding features.
 
         **Relatively detailed config params**
 
@@ -852,6 +858,10 @@ class DLD(Element, core_DLD):
                 "top": 30,
                 "left": 30,
             }
+        if opt_padding_reverse_tone is None:
+            opt_padding_reverse_tone = False
+        if layer_padding is None:
+            layer_padding = (1, 0)
         # Relatively detailed config params
         if dep_sidewall_theme is None:
             dep_sidewall_theme = 0
@@ -1484,9 +1494,28 @@ via_dia_outer_ring: {self.via_dia_outer_ring}"""
 
     def _add_padding_light(
         self,
+        opt_padding_reverse_tone=None,
+        layer_padding=None,
     ):
         """Add padding (mainly for NIL)."""
 
+        # sanity check
+        if self.padding_entity_dim is None or self.padding_entity_pitch is None:
+            raise ValueError(
+                """``padding_entity_dim`` and
+                ``padding_entity_pitch`` are needed."""
+            )
+
+        # default config
+        if opt_padding_reverse_tone is None:
+            opt_padding_reverse_tone = self.opt_padding_reverse_tone
+
+        # layer to write features on
+        if layer_padding is None:
+            layer_padding = self.layer_padding
+        padding_layer = self.layout.layer(*layer_padding)
+
+        # bounding box
         bb = bbox(self.layout.top_cell())
         padding_width = self.padding_width
         pad_cell = self.layout.create_cell("Pad")
@@ -1522,8 +1551,9 @@ via_dia_outer_ring: {self.via_dia_outer_ring}"""
             pitch=self.padding_entity_pitch,
             length=length,
             ll=ll,
-            l1=None,
+            layer=padding_layer,
             cell_target=pad_cell,
+            opt_reverse_tone=opt_padding_reverse_tone,
         )
 
         # pad top
@@ -1553,8 +1583,9 @@ via_dia_outer_ring: {self.via_dia_outer_ring}"""
             pitch=self.padding_entity_pitch,
             length=length,
             ll=ll,
-            l1=None,
+            layer=padding_layer,
             cell_target=pad_cell,
+            opt_reverse_tone=opt_padding_reverse_tone,
         )
 
         # pad right
@@ -1576,8 +1607,9 @@ via_dia_outer_ring: {self.via_dia_outer_ring}"""
             pitch=self.padding_entity_pitch,
             length=length,
             ll=ll,
-            l1=None,
+            layer=padding_layer,
             cell_target=pad_cell,
+            opt_reverse_tone=opt_padding_reverse_tone,
         )
 
         # pad left
@@ -1604,8 +1636,9 @@ via_dia_outer_ring: {self.via_dia_outer_ring}"""
             pitch=self.padding_entity_pitch,
             length=length,
             ll=ll,
-            l1=None,
+            layer=padding_layer,
             cell_target=pad_cell,
+            opt_reverse_tone=opt_padding_reverse_tone,
         )
 
     def _add_array(

@@ -87,8 +87,9 @@ def pad_light(
     pitch,
     length,
     ll,
-    l1=None,
+    layer=None,
     cell_target=None,
+    opt_reverse_tone=False,
 ):
     """
     Hierarchical padding features tilig a given area.
@@ -109,7 +110,7 @@ def pad_light(
         Length of domain in each direction to be filled with array
     ll : list or tuple
         Lower left point of bounding box.
-    l1 : int or NoneType
+    layer : int or NoneType
         Layer of interest on layout.
     cell_target : db.Cell or NoneType
         Target cell of interest.
@@ -120,8 +121,8 @@ def pad_light(
         Layout and target cell after creating the array of tiles.
     """
 
-    if l1 is None:
-        l1 = layout.layer(1, 0)
+    if layer is None:
+        layer = layout.layer(1, 0)
 
     TDBU = db.CplxTrans(layout.dbu).inverted()
     box = db.Region(TDBU * db.DBox(0, 0, *pitch))
@@ -134,10 +135,14 @@ def pad_light(
             (pitch[1] + padding_entity_dim[1]) / 2.0,
         )
     )
-    entity = box - to_be_cut
+
+    if opt_reverse_tone:
+        entity = to_be_cut
+    else:
+        entity = box - to_be_cut
 
     tmp_cell = layout.create_cell("tmp_unit")
-    tmp_cell.shapes(l1).insert(entity)
+    tmp_cell.shapes(layer).insert(entity)
 
     cell_target = generic_array(
         layout=layout,
