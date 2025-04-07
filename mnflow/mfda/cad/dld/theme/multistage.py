@@ -46,6 +46,9 @@ class DLD(Element):
         "padding_width",
         "layer_1",
         "layer_2",
+        #
+        "acc_top_gap_deviation_nondim",
+        "dep_top_gap_deviation_nondim",
     ]
 
     def __init__(
@@ -56,6 +59,7 @@ class DLD(Element):
         opt_filter=None,
         opt_preload=None,
         opt_collection=None,
+        opt_collection_with_via=None,
         offset=None,
         # Multi_inlet
         config_multi_inlet=None,
@@ -97,6 +101,8 @@ class DLD(Element):
         opt_collection : bool, optional
             Whether to include a collection component in downstream of the
             overall structure, by default None
+        opt_collection_with_via : bool, optional
+            Whether the collection component has via, by default None
         offset : list/tuple, optional
             Offset of stage when snapping to upstream neighboring stage, by
             default None
@@ -183,6 +189,8 @@ class DLD(Element):
             opt_preload = False
         if opt_collection is None:
             opt_collection = False
+        if opt_collection_with_via is None:
+            opt_collection_with_via = False
         if verbose is None:
             verbose = True
         if opt_process_upon_init is None:
@@ -381,6 +389,8 @@ Length of offset is expected to be {self.num_stage-1}, which is different from
             ] = self.config_multi_inlet
         if self.opt_collection:
             config_stages_from_config[-1]["opt_collection"] = True
+        if self.opt_collection_with_via:
+            config_stages_from_config[-1]["opt_collection_with_via"] = True
 
     def process(self, *args, **kwargs):
 
