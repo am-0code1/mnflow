@@ -64,6 +64,28 @@ def bbox(obj, dbu=0.001):
     return bb
 
 
+def center(obj, dbu=0.001):
+    """Get the center of bbox of object.
+
+    Parameters
+    ----------
+    obj : db.Cell or db.Region or db.Layout
+        Object to be inspected.
+    dbu : float, optional
+        unit used when using db, by default 0.001, i.e., 1 nm.
+
+    Returns
+    -------
+    tuple
+        (center coordinate.x, center coordinate.y)
+    """
+
+    bb = bbox(obj)
+    center_coords = ((bb[0][0] + bb[1][0]) / 2.0, (bb[0][1] + bb[1][1]) / 2.0)
+
+    return center_coords
+
+
 # ----------------------------------------
 # dev. utils
 # ----------------------------------------
