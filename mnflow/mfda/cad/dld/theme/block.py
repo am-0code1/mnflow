@@ -1456,7 +1456,11 @@ via_dia_outer_ring: {self.via_dia_outer_ring}"""
         # Creating an array of columns
         # Mirroring can be applied prior to arraying
         # -------------------------------------
-        if np.sum(self.array_counts) > 2:
+        if (
+            np.sum(self.array_counts) > 2
+            or self.opt_mirror_before_array[0]
+            or self.opt_mirror_before_array[1]
+        ):
             self._add_array()
 
         # -------------------------------------
@@ -3925,10 +3929,9 @@ There are a few remedies:
         num = array_counts[0] * array_counts[1]
 
         # doubling in case of mirroring core.DLD before arraying
-        if num > 1:
-            for ind_dir in range(2):
-                if opt_mirror_before_array[ind_dir]:
-                    num *= 2
+        for ind_dir in range(2):
+            if opt_mirror_before_array[ind_dir]:
+                num *= 2
 
         # doubling in case of mirrored design
         if opt_mirror:
