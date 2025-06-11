@@ -147,25 +147,23 @@ BibTeX entry:
 ### Pressure Balance
 
 **A. Mehboudi**, **S. Singhal**, and **S.V. Sreenivasan**, **Investigation of pressure balance in proximity of sidewalls in deterministic lateral displacement**. 
-*arXiv:2503.11839v1 [physics.flu-dyn]* Mar 2025.
-DOI: [10.48550/arXiv.2503.11839](https://doi.org/10.48550/arXiv.2503.11839) 
+*Biomicrofluidics* 19, 034102 (2025).
+DOI: [10.1063/5.0272397](https://doi.org/10.1063/5.0272397) 
 
 BibTeX entry:
 ```bibtex
-@misc{mehboudi_investigation_2025,
-  title = {Investigation of Pressure Balance in Proximity of Sidewalls in Deterministic Lateral Displacement},
-  author = {Mehboudi, Aryan and Singhal, Shrawan and Sreenivasan, S. V.},
-  year = {2025},
-  month = mar,
-  number = {arXiv:2503.11839},
-  eprint = {2503.11839},
-  primaryclass = {physics},
-  publisher = {arXiv},
-  doi = {10.48550/arXiv.2503.11839},
-  url = {http://arxiv.org/abs/2503.11839},
-  urldate = {2025-03-20},
-  archiveprefix = {arXiv},
-  keywords = {Physics - Fluid Dynamics}
+@article{mehboudi_investigation_2025,
+    author = {Mehboudi, Aryan and Singhal, Shrawan and Sreenivasan, S.V.},
+    title = {Investigation of pressure balance in proximity of sidewalls in deterministic lateral displacement},
+    journal = {Biomicrofluidics},
+    volume = {19},
+    number = {3},
+    pages = {034102},
+    year = {2025},
+    month = {05},
+    issn = {1932-1058},
+    doi = {10.1063/5.0272397},
+    url = {https://doi.org/10.1063/5.0272397},
 }
 ```
 
