@@ -1,7 +1,14 @@
+# latest guide:
+# https://packaging.python.org/en/latest/guides/writing-pyproject-toml/
+
 [project]
 name = "mnflow"
-version = "0.0.0.1-alpha.3"
-license = {file = "LICENSE"}
+version = "0.0.1.4"
+# `project.license` as a TOML table is deprecated
+license-files = ["LICENSE"]
+# License :: OSI Approved :: GNU Affero General Public License v3 is deprecated
+# in favor of a SPDX license expression
+license = "AGPL-3.0-only"
 authors = [
   { name="Aryan Mehboudi", email="armehbdev@gmail.com" },
 ]
@@ -13,16 +20,15 @@ readme = "README.md"
 requires-python = ">=3.8,<3.13"
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)",
     "Operating System :: OS Independent",
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
 ]
 dependencies = ["klayout", "numpy", "scipy", "pillow"]
 [project.optional-dependencies]
 plot = ["matplotlib"]
 test = ["pytest >= 5.0.0","pytest-cov"]
 lint = ["black","flake8","isort","pre-commit"]
-docs = ["sphinx","sphinx-rtd-theme","myst-nb"]
+docs = ["sphinx","sphinx-rtd-theme","myst-nb", "mnflow[plot]"]
 jupyter = ["ipykernel"]
 #
 dev = ["build", "wheel", "twine", "setuptools>=61.0", "mnflow[jupyter]"]

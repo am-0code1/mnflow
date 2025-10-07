@@ -13,7 +13,7 @@ from typing import Union
 import numpy as np
 
 from mnflow.mfda.cad.dld.utils.boundary_model import (
-    get_gap_w_3d_boundary_treatment,
+    get_gap_with_pressure_balance,
 )
 
 
@@ -213,6 +213,7 @@ class DLD:
             decreasing gap; number of accumulation lanes equals the lenght of
             list/tuple; relevant if ``boundary_treatment`` is set to 'mlb';
             by default None
+
 
 
         **Misc.**
@@ -629,7 +630,8 @@ than 'mlb'. Currently:
                         self.Np,
                         self.pitch_w * 1e-6,
                         self.pitch_a * 1e-6,
-                        (self.pitch_w - self.gap_w) * 1e-6,  # diameter
+                        self.gap_w * 1e-6,
+                        self.gap_a * 1e-6,
                         self.height * 1e-6,
                         dep_side,
                         row,
@@ -637,7 +639,7 @@ than 'mlb'. Currently:
                         acc_Nth_lat,
                     )
 
-                    this_gap = get_gap_w_3d_boundary_treatment(
+                    this_gap = get_gap_with_pressure_balance(
                         *args,
                         estimate=self.pitch_w * 1e-6,
                         verbose=False,
@@ -740,14 +742,15 @@ Please, take note of the configurations and report this bug."""
                         self.Np,
                         self.pitch_w * 1e-6,
                         self.pitch_a * 1e-6,
-                        (self.pitch_w - self.gap_w) * 1e-6,  # diameter
+                        self.gap_w * 1e-6,
+                        self.gap_a * 1e-6,
                         self.height * 1e-6,
                         dep_side,
                         row,
                         self.phi,
                         acc_Nth_lat,
                     )
-                    this_gap = get_gap_w_3d_boundary_treatment(
+                    this_gap = get_gap_with_pressure_balance(
                         *args,
                         estimate=self.pitch_w * 1e-6,
                         verbose=False,
@@ -782,16 +785,17 @@ grid.
                             self.Np,
                             self.pitch_w * 1e-6,
                             self.pitch_a * 1e-6,
-                            (self.pitch_a - self.gap_a) * 1e-6,  # diameter
+                            self.gap_w * 1e-6,
+                            self.gap_a * 1e-6,
                             self.height * 1e-6,
                             dep_side,
                             row,
                             self.phi,
                             acc_Nth_lat,
                         )
-                        this_gap = get_gap_w_3d_boundary_treatment(
+                        this_gap = get_gap_with_pressure_balance(
                             *args,
-                            estimate=self.pitch_w * 1e-6,
+                            estimate=self.pitch_a * 1e-6,
                             verbose=False,
                         )
 

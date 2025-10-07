@@ -114,3 +114,75 @@ We gratefully acknowledge their contributions to this project.
 - [``sphinx``](https://github.com/sphinx-doc/sphinx), and [``sphinx-rtd-theme``](https://github.com/readthedocs/sphinx_rtd_theme): For creating docs.
 - [``pytest``](https://github.com/pytest-dev/pytest), and [``pytest-cov``](https://github.com/pytest-dev/pytest-cov): For creating test cases.
 
+
+
+## Citation
+
+If you use this work in your research, please cite the relevant works associated with it as listed in the following.
+
+### Original paper
+
+**A. Mehboudi**, **S. Singhal**, and **S.V. Sreenivasan**, **A universal framework for design and manufacture of deterministic lateral displacement chips**. *Lab on a Chip* **25**, 1521-1536 (2025).
+DOI: [10.1039/D4LC00838C](https://pubs.rsc.org/en/content/articlelanding/2025/lc/d4lc00838c) 
+
+BibTeX entry:
+```bibtex
+@article{mehboudi_universal_2025,
+  title = {A Universal Framework for Design and Manufacture of Deterministic Lateral Displacement Chips},
+  author = {Mehboudi, Aryan and Singhal, Shrawan and Sreenivasan, S. V.},
+  year = {2025},
+  month = mar,
+  journal = {Lab on a Chip},
+  volume = {25},
+  number = {6},
+  pages = {1521--1536},
+  publisher = {The Royal Society of Chemistry},
+  issn = {1473-0189},
+  doi = {10.1039/D4LC00838C},
+  url = {https://pubs.rsc.org/en/content/articlelanding/2025/lc/d4lc00838c},
+  urldate = {2025-03-14}
+}
+```
+
+### Pressure Balance
+
+**A. Mehboudi**, **S. Singhal**, and **S.V. Sreenivasan**, **Investigation of pressure balance in proximity of sidewalls in deterministic lateral displacement**. 
+*Biomicrofluidics* 19, 034102 (2025).
+DOI: [10.1063/5.0272397](https://doi.org/10.1063/5.0272397) 
+
+BibTeX entry:
+```bibtex
+@article{mehboudi_investigation_2025,
+    author = {Mehboudi, Aryan and Singhal, Shrawan and Sreenivasan, S.V.},
+    title = {Investigation of pressure balance in proximity of sidewalls in deterministic lateral displacement},
+    journal = {Biomicrofluidics},
+    volume = {19},
+    number = {3},
+    pages = {034102},
+    year = {2025},
+    month = {05},
+    issn = {1932-1058},
+    doi = {10.1063/5.0272397},
+    url = {https://doi.org/10.1063/5.0272397},
+}
+```
+
+### Zenodo Archive
+**A. Mehboudi**, **mnFlow: A package for micro/nanoflow**, *Zenodo*, 2024.
+DOI: [10.5281/zenodo.14357811](https://zenodo.org/doi/10.5281/zenodo.14357811)
+
+BibTeX entry:
+```bibtex
+@misc{mehboudi_mnflow_2024,
+  title = {{{mnFlow}}: {{A}} Package for Micro/Nanoflow},
+  shorttitle = {{{mnFlow}}},
+  author = {Mehboudi, Aryan},
+  year = {2024},
+  month = dec,
+  publisher = {Zenodo},
+  doi = {10.5281/ZENODO.14357811},
+  url = {https://zenodo.org/doi/10.5281/zenodo.14357811},
+  abstract = {Micro-nanoflow (mnFlow) package is aimed at providing the community with tools for design and modeling of micro-nanofluidic chips.},
+  copyright = {GNU Affero General Public License v3.0 only}
+}
+```
