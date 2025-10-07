@@ -3,7 +3,7 @@
 
 [project]
 name = "mnflow"
-version = "0.0.2"
+version = "0.0.2.2"
 # `project.license` as a TOML table is deprecated
 license-files = ["LICENSE"]
 # License :: OSI Approved :: GNU Affero General Public License v3 is deprecated
