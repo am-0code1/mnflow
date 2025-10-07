@@ -52,13 +52,18 @@ If you use this work in your research, please cite the relevant works associated
 
 Original paper
 ^^^^^^^^^^^^^^
-**A. Mehboudi**, **S. Singhal**, and **S.V. Sreenivasan**, **A universal framework for design and manufacture of deterministic lateral displacement chips**. *Lab on a Chip* **25**, 1521-1536 (2025).
+A. Mehboudi, S. Singhal, and S.V. Sreenivasan, **A universal framework for design and manufacture of deterministic lateral displacement chips**. *Lab on a Chip* **25**, 1521-1536 (2025).
 DOI: `10.1039/D4LC00838C <https://pubs.rsc.org/en/content/articlelanding/2025/lc/d4lc00838c>`_
 
 Pressure Balance
 ^^^^^^^^^^^^^^^^
-**A. Mehboudi**, **S. Singhal**, and **S.V. Sreenivasan**, **Investigation of pressure balance in proximity of sidewalls in deterministic lateral displacement**. *arXiv:2503.11839v1 [physics.flu-dyn]* Mar 2025.
+A. Mehboudi, S. Singhal, and S.V. Sreenivasan, **Investigation of pressure balance in proximity of sidewalls in deterministic lateral displacement**. *arXiv:2503.11839v1 [physics.flu-dyn]* Mar 2025.
 DOI: `10.48550/arXiv.2503.11839 <https://doi.org/10.48550/arXiv.2503.11839>`_
+
+Multi-lane boundary (MLB) model optimized through combinatorial approach
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+A. Mehboudi, S. Singhal, and S.V. Sreenivasan, **A Combinatorial Approach to Novel Boundary Design in Deterministic Lateral Displacement**. *arXiv.2506.06936 [physics.flu-dyn]* Jun 2025.
+DOI: `10.48550/arXiv.2506.06936 <https://arxiv.org/abs/2506.06936>`_
 
 Zenodo Archive
 ^^^^^^^^^^^^^^

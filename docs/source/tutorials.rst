@@ -7,4 +7,5 @@ Tutorials
 	tutorials/benchmarks_paper_loc
 	tutorials/benchmarks_paper_loc_ESI
 	tutorials/benchmarks_pressure_balance
+	tutorials/benchmarks_boundary_treatment_mlb
 	

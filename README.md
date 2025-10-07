@@ -122,7 +122,7 @@ If you use this work in your research, please cite the relevant works associated
 
 ### Original paper
 
-**A. Mehboudi**, **S. Singhal**, and **S.V. Sreenivasan**, **A universal framework for design and manufacture of deterministic lateral displacement chips**. *Lab on a Chip* **25**, 1521-1536 (2025).
+A. Mehboudi, S. Singhal, and S.V. Sreenivasan, ***A universal framework for design and manufacture of deterministic lateral displacement chips***. *Lab on a Chip* **25**, 1521-1536 (2025).
 DOI: [10.1039/D4LC00838C](https://pubs.rsc.org/en/content/articlelanding/2025/lc/d4lc00838c) 
 
 BibTeX entry:
@@ -146,7 +146,7 @@ BibTeX entry:
 
 ### Pressure Balance
 
-**A. Mehboudi**, **S. Singhal**, and **S.V. Sreenivasan**, **Investigation of pressure balance in proximity of sidewalls in deterministic lateral displacement**. 
+A. Mehboudi, S. Singhal, and S.V. Sreenivasan, ***Investigation of pressure balance in proximity of sidewalls in deterministic lateral displacement***. 
 *Biomicrofluidics* 19, 034102 (2025).
 DOI: [10.1063/5.0272397](https://doi.org/10.1063/5.0272397) 
 
@@ -167,8 +167,27 @@ BibTeX entry:
 }
 ```
 
+### Multi-lane boundary (MLB) model optimized through combinatorial approach
+
+A. Mehboudi, S. Singhal, and S.V. Sreenivasan, ***A Combinatorial Approach to Novel Boundary Design in Deterministic Lateral Displacement***. 
+*arXiv:2506.06936* (2025).
+DOI: [10.48550/arXiv.2506.06936](https://arxiv.org/abs/2506.06936)
+
+BibTeX entry:
+```bibtex
+@article{mehboudi_combinatorial_2025,
+    author = {Mehboudi, Aryan and Singhal, Shrawan and Sreenivasan, S.V.},
+    title = {A Combinatorial Approach to Novel Boundary Design in Deterministic Lateral Displacement},
+    journal = {arXiv},
+    year = {2025},
+    month = {06},
+    doi = {10.48550/arXiv.2506.06936},
+    url = {https://doi.org/10.48550/arXiv.2506.06936},
+}
+```
+
 ### Zenodo Archive
-**A. Mehboudi**, **mnFlow: A package for micro/nanoflow**, *Zenodo*, 2024.
+A. Mehboudi, ***mnFlow: A package for micro/nanoflow***, *Zenodo*, 2024.
 DOI: [10.5281/zenodo.14357811](https://zenodo.org/doi/10.5281/zenodo.14357811)
 
 BibTeX entry:
